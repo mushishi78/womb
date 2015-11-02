@@ -6,11 +6,9 @@ reduce boiler plate.
 
 ## Usage
 
-Once wrapped around an object, `Womb` forwards messages via `method_missing` to
-the object. All forwarded messages are sent with the `send` method, such that
-normally private methods such as `attr_accessor` and `define_method` can be
-used. After the object has been defined, the `birth` method returns the
-object.
+Once wrapped around an object, `Womb` stores all messages via `method_missing`
+and then sends them to the object when the `birth` method is called, returning
+the defined object.
 
 ``` ruby
 require 'womb'

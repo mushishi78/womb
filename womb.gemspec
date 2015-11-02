@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name         = 'womb'
-  s.version      = '0.0.1'
+  s.version      = '0.0.2'
   s.author       = 'Max White'
   s.email        = 'mushishi78@gmail.com'
   s.homepage     = 'https://github.com/mushishi78/womb'

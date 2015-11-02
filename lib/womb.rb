@@ -5,10 +5,13 @@ class Womb < BasicObject
 
   def initialize(obj)
     @obj = obj
+    @messages = []
   end
 
-  def method_missing(name, *args, &b)
-    obj.send(aliases[name] || name, *args, &b)
+  def method_missing(method, *args, &b)
+    method = aliases[method] || method
+    return super unless obj.respond_to?(method, true)
+    @messages << [obj, [method, *args], b]
     self
   end
 
@@ -20,12 +23,14 @@ class Womb < BasicObject
     end
   end
 
-  def send_to_singleton(*args)
-    obj.singleton_class.send(*args)
+  def send_to_singleton(*args, &b)
+    @messages << [obj.singleton_class, args, b]
     self
   end
 
   def birth
+    messages = @messages
+    @obj.class_eval { messages.each { |(target, args, b)| target.send(*args, &b) } }
     @obj
   end
 
@@ -37,5 +42,4 @@ class Womb < BasicObject
     @aliases ||= { assign: :define_singleton_method,
                    def: :define_method }
   end
-
 end

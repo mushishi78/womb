@@ -3,16 +3,13 @@ require 'womb'
 describe Womb do
   it 'can delegate missing methods' do
     obj = Womb[Class.new]
-      .attr_accessor(:a, :b)
-      .private(:a, :b)
-      .define_method(:add) { a + b }
+      .attr_accessor(:a)
+      .define_method(:square) { a ** 2 }
       .birth
       .new
 
-    obj.a = 35
-    obj.b = 9
-    expect { obj.a }.to raise_error(NoMethodError)
-    expect(obj.add).to eql(44)
+    obj.a = 3
+    expect(obj.square).to eql(9)
   end
 
   it 'can use aliased method names' do
@@ -38,11 +35,22 @@ describe Womb do
   it 'can send messages to singleton' do
     klass = Womb[Class.new]
       .init(:a)
-      .send_to_singleton(:alias_method, :[], :new)
+      .assign(:build) { |a| new(a.to_s) }
+      .send_to_singleton(:alias_method, :[], :build)
       .attr_reader(:a)
       .birth
 
-    instance = klass[7]
-    expect(instance.a).to eql(7)
+    expect(klass.build(7).a).to eql('7')
+    expect(klass[7].a).to eql('7')
+  end
+
+  it 'can use private for postceding definitions' do
+    obj = Womb[Class.new]
+      .private
+      .def(:a){5}
+      .birth
+      .new
+
+    expect { obj.a }.to raise_error(NoMethodError)
   end
 end
