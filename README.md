@@ -33,7 +33,7 @@ an `initialize` method that simply sets instance variables from it's arguments.
 
 ``` ruby
 RegPolygon = Womb[Module.new]
-  .assign(:angle) { |sides| (sides - 2) * Math::PI / sides }
+  .assign(:interior_angle) { |sides| (sides - 2) * Math::PI / sides }
   .birth
 
 Triangle = Womb[Module.new]
@@ -42,7 +42,7 @@ Triangle = Womb[Module.new]
 
 RegTriangle = Womb[Class.new]
   .init(:base)
-  .def(:height) { @base * Math.sin(RegPolygon.angle(3)) }
+  .def(:height) { @base * Math.sin(RegPolygon.interior_angle(3)) }
   .def(:area) { Triangle.area(@base, height) }
   .birth
 
