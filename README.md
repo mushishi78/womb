@@ -30,21 +30,24 @@ and `define_singleton_method` respectively, and `init` can be used to create
 an `initialize` method that simply sets instance variables from it's arguments.
 
 ``` ruby
-RegPolygon = Womb[Module.new]
-  .assign(:interior_angle) { |sides| (sides - 2) * Math::PI / sides }
+require 'git'
+
+Repo = Womb[Class.new]
+  .assign(:open) { |path| new(Git.open(path)) }
+  .assign(:init) { |path| new(Git.init(path)) }
+  .assign(:clone) { |url, path| new(Git.clone(url, path)) }
+  .init(:git)
+  .def(:checkout) { |branch| git.checkout(branch); self }
+  .def(:branch) { |branch| git.branch(branch).checkout; self }
+  .def(:add) { git.add(all: true); self }
+  .def(:commit) { |message| git.commit(message); self }
+  .def(:push) { git.push('origin', git.current_branch, force: true); self }
+  .def(:ls) { add; git.ls_files.keys }
+  .private
+  .attr_reader(:git)
   .birth
 
-Triangle = Womb[Module.new]
-  .assign(:area) { |base, height| base * height / 2 }
-  .birth
-
-RegTriangle = Womb[Class.new]
-  .init(:base)
-  .def(:height) { @base * Math.sin(RegPolygon.interior_angle(3)) }
-  .def(:area) { Triangle.area(@base, height) }
-  .birth
-
-RegTriangle.new(2).area # 1.7320508075688772
+Repo.open('../my_local_repo').add.commit('Updating with changes').push
 ```
 
 An additional helper, `send_to_singleton`, can be used to send messages to the
