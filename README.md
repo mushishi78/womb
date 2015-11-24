@@ -34,7 +34,6 @@ require 'git'
 
 Repo = Womb[Class.new]
   .assign(:open) { |path| new(Git.open(path)) }
-  .assign(:init) { |path| new(Git.init(path)) }
   .assign(:clone) { |url, path| new(Git.clone(url, path)) }
   .init(:git)
   .def(:checkout) { |branch| git.checkout(branch); self }
